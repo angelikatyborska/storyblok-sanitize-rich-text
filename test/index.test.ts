@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sanitizeRichText } from "../src/index.ts";
+import { sanitizeAttrs, sanitizeRichText } from "../src/index.ts";
 
 describe("sanitizeRichText", () => {
   it("removes everything if whitelist is empty", () => {
@@ -10,7 +10,6 @@ describe("sanitizeRichText", () => {
           type: "heading",
           attrs: {
             level: 1,
-            textAlign: null,
           },
           content: [
             {
@@ -23,7 +22,6 @@ describe("sanitizeRichText", () => {
           type: "heading",
           attrs: {
             level: 2,
-            textAlign: null,
           },
           content: [
             {
@@ -34,9 +32,7 @@ describe("sanitizeRichText", () => {
         },
         {
           type: "paragraph",
-          attrs: {
-            textAlign: null,
-          },
+          attrs: {},
           content: [
             {
               text: "paragraph",
@@ -65,7 +61,6 @@ describe("sanitizeRichText", () => {
           type: "heading",
           attrs: {
             level: 1,
-            textAlign: null,
           },
           content: [
             {
@@ -78,7 +73,6 @@ describe("sanitizeRichText", () => {
           type: "heading",
           attrs: {
             level: 2,
-            textAlign: null,
           },
           content: [
             {
@@ -89,9 +83,7 @@ describe("sanitizeRichText", () => {
         },
         {
           type: "paragraph",
-          attrs: {
-            textAlign: null,
-          },
+          attrs: {},
           content: [
             {
               text: "paragraph",
@@ -111,7 +103,6 @@ describe("sanitizeRichText", () => {
           type: "heading",
           attrs: {
             level: 2,
-            textAlign: null,
           },
           content: [
             {
@@ -127,4 +118,42 @@ describe("sanitizeRichText", () => {
   });
 
   // TODO: test recursive whitelisting, e.g. in lists
+});
+
+describe("sanitizeAttrs", () => {
+  describe("textAlign", () => {
+    it("removes if specific value not allowed", () => {
+      expect(sanitizeAttrs({ level: 1, textAlign: "left" }, [])).toStrictEqual({
+        level: 1,
+      });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-center"]),
+      ).toStrictEqual({ level: 1 });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-right"]),
+      ).toStrictEqual({ level: 1 });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-justify"]),
+      ).toStrictEqual({ level: 1 });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-left"]),
+      ).toStrictEqual({ level: 1, textAlign: "left" });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "center" }, ["align-center"]),
+      ).toStrictEqual({ level: 1, textAlign: "center" });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "right" }, ["align-right"]),
+      ).toStrictEqual({ level: 1, textAlign: "right" });
+
+      expect(
+        sanitizeAttrs({ level: 1, textAlign: "justify" }, ["align-justify"]),
+      ).toStrictEqual({ level: 1, textAlign: "justify" });
+    });
+  });
 });
