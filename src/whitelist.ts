@@ -20,6 +20,15 @@ export function isContentWhitelisted(object: any, whitelist: string[]) {
         return whitelist.includes("olist");
       case "code_block":
         return whitelist.includes("code");
+      case "table":
+        return whitelist.includes("add-table");
+      case "tableHeader":
+        // the rich text object does not differentiate between header columns, rows, or cells, it's all cells
+        return (
+          whitelist.includes("toggle-header-column") ||
+          whitelist.includes("toggle-header-row") ||
+          whitelist.includes("toggle-header-cell")
+        );
 
       // allow all unknown blocks
       default:
@@ -37,9 +46,14 @@ export function isAttrWhitelisted(
   whitelist: string[],
 ) {
   switch (attrName) {
-    case "textAlign": {
+    case "textAlign":
       return whitelist.includes(`align-${attrValue}`);
-    }
+    // is such a generic attr name really used only for cell-colors? hopefully, because this check is not aware of the context
+    case "backgroundColor":
+      return whitelist.includes("cell-color");
+    case "colspan":
+    case "rowspan":
+      return attrValue > 1 ? whitelist.includes("merge-cells") : true;
     // allow all unknown attributes
     default:
       return true;

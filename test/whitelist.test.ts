@@ -202,11 +202,164 @@ describe("isContentWhitelisted", () => {
       expect(isContentWhitelisted(input, ["ai-spelling"])).toBe(false);
     });
   });
+
+  describe("table", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "table",
+        content: [
+          {
+            type: "tableRow",
+            content: [
+              {
+                type: "tableHeader",
+                attrs: {
+                  colspan: 1,
+                  rowspan: 1,
+                  colwidth: null,
+                },
+                content: [
+                  {
+                    type: "paragraph",
+                    attrs: {
+                      textAlign: null,
+                    },
+                    content: [
+                      {
+                        text: "order",
+                        type: "text",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "tableHeader",
+                attrs: {
+                  colspan: 1,
+                  rowspan: 1,
+                  colwidth: null,
+                },
+                content: [
+                  {
+                    type: "paragraph",
+                    attrs: {
+                      textAlign: null,
+                    },
+                    content: [
+                      {
+                        text: "date",
+                        type: "text",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: "tableRow",
+            content: [
+              {
+                type: "tableCell",
+                attrs: {
+                  colspan: 1,
+                  rowspan: 1,
+                  colwidth: null,
+                  backgroundColor: null,
+                },
+                content: [
+                  {
+                    type: "paragraph",
+                    attrs: {
+                      textAlign: null,
+                    },
+                    content: [
+                      {
+                        text: "1",
+                        type: "text",
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "tableCell",
+                attrs: {
+                  colspan: 1,
+                  rowspan: 1,
+                  colwidth: null,
+                  backgroundColor: null,
+                },
+                content: [
+                  {
+                    type: "paragraph",
+                    attrs: {
+                      textAlign: null,
+                    },
+                    content: [
+                      {
+                        text: "2023.01.04",
+                        type: "text",
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(isContentWhitelisted(input, ["h2", "add-table"])).toBe(true);
+      expect(isContentWhitelisted(input, ["h2"])).toBe(false);
+      expect(isContentWhitelisted(input, ["ai-spelling"])).toBe(false);
+    });
+  });
+
+  describe("tableHeader", () => {
+    it("match one of many formatting options", () => {
+      const input = {
+        type: "tableHeader",
+        attrs: {
+          colspan: 1,
+          rowspan: 1,
+          colwidth: null,
+        },
+        content: [
+          {
+            type: "paragraph",
+            attrs: {
+              textAlign: null,
+            },
+            content: [
+              {
+                text: "order",
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(isContentWhitelisted(input, ["h2", "toggle-header-row"])).toBe(
+        true,
+      );
+      expect(isContentWhitelisted(input, ["h2", "toggle-header-column"])).toBe(
+        true,
+      );
+      expect(isContentWhitelisted(input, ["h2", "toggle-header-cell"])).toBe(
+        true,
+      );
+      expect(isContentWhitelisted(input, ["h2"])).toBe(false);
+      expect(isContentWhitelisted(input, ["ai-spelling"])).toBe(false);
+    });
+  });
 });
 
 describe("isAttrWhitelisted", () => {
   describe("textAlign", () => {
-    it("has to match value", () => {
+    it("whitelisting is value-specific", () => {
       expect(isAttrWhitelisted("textAlign", "left", ["align-left"])).toBe(true);
       expect(isAttrWhitelisted("textAlign", "center", ["align-center"])).toBe(
         true,
@@ -230,6 +383,37 @@ describe("isAttrWhitelisted", () => {
       expect(isAttrWhitelisted("textAlign", undefined, ["align-justify"])).toBe(
         false,
       );
+    });
+  });
+
+  describe("backgroundColor", () => {
+    it("is cell-color", () => {
+      expect(
+        isAttrWhitelisted("backgroundColor", "#83EB92", ["cell-color"]),
+      ).toBe(true);
+      expect(
+        isAttrWhitelisted("backgroundColor", "#83EB92", [
+          "highlight",
+          "cell-color",
+        ]),
+      ).toBe(true);
+      expect(
+        isAttrWhitelisted("backgroundColor", "#83EB92", ["highlight"]),
+      ).toBe(false);
+    });
+  });
+
+  describe("colspan / rowspan", () => {
+    it("always allows value of 1", () => {
+      expect(isAttrWhitelisted("rowspan", 1, [])).toBe(true);
+      expect(isAttrWhitelisted("colspan", 1, [])).toBe(true);
+    });
+
+    it("requires merging cells for higher values", () => {
+      expect(isAttrWhitelisted("rowspan", 2, ["h2", "merge-cells"])).toBe(true);
+      expect(isAttrWhitelisted("rowspan", 2, ["h2"])).toBe(false);
+      expect(isAttrWhitelisted("colspan", 3, ["h2", "merge-cells"])).toBe(true);
+      expect(isAttrWhitelisted("colspan", 3, ["h2"])).toBe(false);
     });
   });
 });
