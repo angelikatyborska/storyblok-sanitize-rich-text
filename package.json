@@ -1,0 +1,48 @@
+{
+  "name": "storyblok-sanitize-rich-text",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "check": "tsc --noEmit",
+    "lint": "pnpm lint:prettier && pnpm lint:js && pnpm lint:tsc",
+    "lint:js": "eslint --ext .ts --ext .cjs --ext .js .",
+    "lint:prettier": "prettier --check .",
+    "format": "pnpm format:prettier && pnpm format:js",
+    "format:js": "pnpm lint:js --fix",
+    "format:prettier": "prettier --write ."
+  },
+  "keywords": [
+    "storyblok",
+    "rich text",
+    "richtext",
+    "sanitizer"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.5.2",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@eslint/json": "^2.0.0",
+    "@eslint/markdown": "^8.0.2",
+    "eslint": "^10.5.0",
+    "globals": "^17.7.0",
+    "jiti": "^2.7.0",
+    "prettier": "^3.8.5",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0",
+    "vitest": "^4.1.9"
+  }
+}
