@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isContentWhitelisted(object: any, whitelist: string[]) {
-  if (object && typeof object === "object" && "type" in object) {
-    switch (object.type) {
+export function isContentWhitelisted(content: any, whitelist: string[]) {
+  if (content && typeof content === "object" && "type" in content) {
+    switch (content.type) {
       case "text":
         return true;
       case "paragraph":
         return whitelist.includes("paragraph");
       case "heading":
-        return whitelist.includes(`h${object.attrs.level}`);
+        return whitelist.includes(`h${content.attrs.level}`);
       case "horizontal_rule":
         return whitelist.includes("hrule");
       case "image":
@@ -31,6 +31,38 @@ export function isContentWhitelisted(object: any, whitelist: string[]) {
         );
 
       // allow all unknown blocks
+      default:
+        return true;
+    }
+  } else {
+    return true;
+  }
+}
+
+export function isMarkWhitelisted(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  mark: any,
+  whitelist: string[],
+) {
+  if (mark && typeof mark === "object" && "type" in mark) {
+    switch (mark.type) {
+      case "bold":
+        return whitelist.includes("bold");
+      case "underline":
+        return whitelist.includes("underline");
+      case "textStyle":
+        return whitelist.includes("textStyle");
+      case "highlight":
+        return whitelist.includes("highlight");
+      case "strike":
+        return whitelist.includes("strike");
+      case "superscript":
+        return whitelist.includes("superscript");
+      case "subscript":
+        return whitelist.includes("subscript");
+      case "code":
+        return whitelist.includes("inlinecode");
+      // allow all unknown marks
       default:
         return true;
     }

@@ -1,4 +1,8 @@
-import { isAttrWhitelisted, isContentWhitelisted } from "./whitelist.ts";
+import {
+  isAttrWhitelisted,
+  isContentWhitelisted,
+  isMarkWhitelisted,
+} from "./whitelist.ts";
 
 export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
   if (
@@ -35,6 +39,31 @@ export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
     object = {
       ...object,
       attrs: sanitizeAttrs(object["attrs"], whitelist),
+    };
+  }
+
+  if (
+    object &&
+    typeof object === "object" &&
+    "marks" in object &&
+    object["marks"] &&
+    Array.isArray(object["marks"])
+  ) {
+    object = {
+      ...object,
+      marks: object["marks"]
+        .map((mark) => {
+          if (mark && typeof mark === "object") {
+            if (isMarkWhitelisted(mark, whitelist)) {
+              return mark;
+            } else {
+              return null;
+            }
+          } else {
+            return mark;
+          }
+        })
+        .filter((mark) => mark !== null),
     };
   }
 

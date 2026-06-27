@@ -176,6 +176,143 @@ describe("sanitizeRichText", () => {
 
     expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
   });
+
+  it("removes inline formatting from various block elements", () => {
+    const input = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          attrs: {
+            textAlign: null,
+          },
+          content: [
+            {
+              text: "Lorem ",
+              type: "text",
+              marks: [
+                {
+                  type: "strike",
+                },
+              ],
+            },
+            {
+              text: "ipsum",
+              type: "text",
+              marks: [
+                {
+                  type: "bold",
+                },
+                {
+                  type: "strike",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "blockquote",
+          content: [
+            {
+              type: "paragraph",
+              attrs: {
+                textAlign: null,
+              },
+              content: [
+                {
+                  text: "Lorem ",
+                  type: "text",
+                  marks: [
+                    {
+                      type: "textStyle",
+                      attrs: {
+                        color: "#E90404",
+                      },
+                    },
+                    {
+                      type: "underline",
+                    },
+                  ],
+                },
+                {
+                  text: "ipsum",
+                  type: "text",
+                  marks: [
+                    {
+                      type: "textStyle",
+                      attrs: {
+                        color: "#E90404",
+                      },
+                    },
+                    {
+                      type: "underline",
+                    },
+                    {
+                      type: "highlight",
+                      attrs: {
+                        color: "#BEEDD3",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const whitelist = ["paragraph", "quote", "bold"];
+
+    const expectedOutput = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          attrs: {},
+          content: [
+            {
+              text: "Lorem ",
+              type: "text",
+              marks: [],
+            },
+            {
+              text: "ipsum",
+              type: "text",
+              marks: [
+                {
+                  type: "bold",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "blockquote",
+          content: [
+            {
+              type: "paragraph",
+              attrs: {},
+              content: [
+                {
+                  text: "Lorem ",
+                  type: "text",
+                  marks: [],
+                },
+                {
+                  text: "ipsum",
+                  type: "text",
+                  marks: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+  });
 });
 
 describe("sanitizeAttrs", () => {

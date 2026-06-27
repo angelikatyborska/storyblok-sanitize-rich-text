@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { isAttrWhitelisted, isContentWhitelisted } from "../src/whitelist.ts";
+import {
+  isAttrWhitelisted,
+  isContentWhitelisted,
+  isMarkWhitelisted,
+} from "../src/whitelist.ts";
 
 describe("isContentWhitelisted", () => {
   describe("text", () => {
@@ -414,6 +418,113 @@ describe("isAttrWhitelisted", () => {
       expect(isAttrWhitelisted("rowspan", 2, ["h2"])).toBe(false);
       expect(isAttrWhitelisted("colspan", 3, ["h2", "merge-cells"])).toBe(true);
       expect(isAttrWhitelisted("colspan", 3, ["h2"])).toBe(false);
+    });
+  });
+});
+
+describe("isMarkWhitelisted", () => {
+  describe("bold", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "bold",
+      };
+
+      expect(isMarkWhitelisted(input, ["bold"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "bold"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["underline"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("underline", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "underline",
+      };
+
+      expect(isMarkWhitelisted(input, ["underline"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "underline"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["bold"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("textStyle", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "textStyle",
+      };
+
+      expect(isMarkWhitelisted(input, ["textStyle"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "textStyle"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["bold"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("highlight", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "highlight",
+      };
+
+      expect(isMarkWhitelisted(input, ["highlight"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "highlight"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["bold"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("strike", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "strike",
+      };
+
+      expect(isMarkWhitelisted(input, ["strike"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "strike"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["bold"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("superscript", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "superscript",
+      };
+
+      expect(isMarkWhitelisted(input, ["superscript"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "superscript"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["subscript"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("subscript", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "subscript",
+      };
+
+      expect(isMarkWhitelisted(input, ["subscript"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "subscript"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["superscript"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
+    });
+  });
+
+  describe("code (inline)", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "code",
+      };
+
+      // code = code block, inlinecode = inline code
+      expect(isMarkWhitelisted(input, ["inlinecode"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "inlinecode"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["code"])).toBe(false);
+      expect(isMarkWhitelisted(input, ["bold"])).toBe(false);
     });
   });
 });
