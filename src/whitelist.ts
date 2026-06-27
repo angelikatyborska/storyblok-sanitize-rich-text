@@ -51,7 +51,7 @@ export function isMarkWhitelisted(
       case "underline":
         return whitelist.includes("underline");
       case "textStyle":
-        return whitelist.includes("textStyle");
+        return whitelist.includes("color");
       case "highlight":
         return whitelist.includes("highlight");
       case "strike":

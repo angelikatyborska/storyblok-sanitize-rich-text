@@ -455,8 +455,8 @@ describe("isMarkWhitelisted", () => {
         type: "textStyle",
       };
 
-      expect(isMarkWhitelisted(input, ["textStyle"])).toBe(true);
-      expect(isMarkWhitelisted(input, ["h2", "textStyle"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["color"])).toBe(true);
+      expect(isMarkWhitelisted(input, ["h2", "color"])).toBe(true);
       expect(isMarkWhitelisted(input, ["bold"])).toBe(false);
       expect(isMarkWhitelisted(input, ["h1"])).toBe(false);
     });
