@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sanitizeAttrs, sanitizeRichText } from "../src/index.ts";
+import { sanitizeAttrs, sanitizeRichText } from "../src/sanitize.ts";
 
 describe("sanitizeRichText", () => {
   it("removes everything if whitelist is empty", () => {
@@ -312,6 +312,15 @@ describe("sanitizeRichText", () => {
     };
 
     expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+  });
+
+  it('gracefully handles completely incompatible "object"', () => {
+    expect(sanitizeRichText("", [])).toBe("");
+    expect(sanitizeRichText("hello", [])).toBe("hello");
+    expect(sanitizeRichText([], [])).toStrictEqual([]);
+    expect(sanitizeRichText({ type: "doc" }, [])).toStrictEqual({
+      type: "doc",
+    });
   });
 });
 
