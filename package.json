@@ -9,7 +9,7 @@
     "test": "vitest run",
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "check": "tsc --noEmit",
-    "lint": "pnpm lint:prettier && pnpm lint:js && pnpm lint:tsc",
+    "lint": "pnpm lint:prettier && pnpm lint:js",
     "lint:js": "eslint --ext .ts --ext .cjs --ext .js .",
     "lint:prettier": "prettier --check .",
     "format": "pnpm format:prettier && pnpm format:js",
