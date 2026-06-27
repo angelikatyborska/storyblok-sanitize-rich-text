@@ -5,10 +5,21 @@ export function isContentWhitelisted(object: any, whitelist: string[]) {
       case "text":
         return true;
       case "paragraph":
-        return whitelist.includes(`paragraph`);
-
+        return whitelist.includes("paragraph");
       case "heading":
         return whitelist.includes(`h${object.attrs.level}`);
+      case "horizontal_rule":
+        return whitelist.includes("hrule");
+      case "image":
+        return whitelist.includes("image");
+      case "blockquote":
+        return whitelist.includes("quote");
+      case "bullet_list":
+        return whitelist.includes("list");
+      case "ordered_list":
+        return whitelist.includes("olist");
+      case "code_block":
+        return whitelist.includes("code");
 
       // allow all unknown blocks
       default:

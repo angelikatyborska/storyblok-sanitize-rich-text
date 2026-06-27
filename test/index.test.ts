@@ -117,7 +117,65 @@ describe("sanitizeRichText", () => {
     expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
   });
 
-  // TODO: test recursive whitelisting, e.g. in lists
+  it("removes nested block elements if not allowed", () => {
+    const input = {
+      type: "doc",
+      content: [
+        {
+          type: "blockquote",
+          content: [
+            {
+              type: "paragraph",
+              attrs: {
+                textAlign: null,
+              },
+              content: [
+                {
+                  text: "Lorem ipsum?",
+                  type: "text",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          attrs: {
+            textAlign: null,
+          },
+          content: [
+            {
+              type: "image",
+              attrs: {
+                id: 192022657793507,
+                alt: "",
+                src: "https://a.storyblok.com/f/293475179119189/4624x3468/881fb8e793/2026-06-26-10-06-36.jpg",
+                title: "",
+                source: "",
+                copyright: "",
+                meta_data: {},
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    const whitelist = ["image", "quote"];
+
+    // removed nested paragraph from blockquote
+    const expectedOutput = {
+      type: "doc",
+      content: [
+        {
+          type: "blockquote",
+          content: [],
+        },
+      ],
+    };
+
+    expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+  });
 });
 
 describe("sanitizeAttrs", () => {
