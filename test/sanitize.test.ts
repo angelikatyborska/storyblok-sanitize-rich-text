@@ -2,6 +2,52 @@ import { describe, it, expect } from "vitest";
 import { sanitizeAttrs, sanitizeRichText } from "../src/sanitize.ts";
 
 describe("sanitizeRichText", () => {
+  it("removes nothing if customize toolbar is turned off", () => {
+    const input = {
+      type: "doc",
+      content: [
+        {
+          type: "heading",
+          attrs: {
+            level: 1,
+          },
+          content: [
+            {
+              text: "Heading 1",
+              type: "text",
+            },
+          ],
+        },
+        {
+          type: "heading",
+          attrs: {
+            level: 2,
+          },
+          content: [
+            {
+              text: "Heading 2",
+              type: "text",
+            },
+          ],
+        },
+        {
+          type: "paragraph",
+          attrs: {},
+          content: [
+            {
+              text: "paragraph",
+              type: "text",
+            },
+          ],
+        },
+      ],
+    };
+
+    const schema = { customize_toolbar: false, toolbar: [] };
+
+    expect(sanitizeRichText(input, schema)).toStrictEqual(input);
+  });
+
   it("removes everything if whitelist is empty", () => {
     const input = {
       type: "doc",
@@ -43,14 +89,14 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    const whitelist: string[] = [];
+    const schema = { customize_toolbar: true, toolbar: [] };
 
     const expectedOutput = {
       type: "doc",
       content: [],
     };
 
-    expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
   });
 
   it("keeps block elements allowed by the whitelist", () => {
@@ -94,7 +140,7 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    const whitelist = ["h2"];
+    const schema = { customize_toolbar: true, toolbar: ["h2"] };
 
     const expectedOutput = {
       type: "doc",
@@ -114,7 +160,7 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
   });
 
   it("removes nested block elements if not allowed", () => {
@@ -161,7 +207,7 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    const whitelist = ["image", "quote"];
+    const schema = { customize_toolbar: true, toolbar: ["image", "quote"] };
 
     // removed nested paragraph from blockquote
     const expectedOutput = {
@@ -174,7 +220,7 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
   });
 
   it("removes inline formatting from various block elements", () => {
@@ -262,7 +308,10 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    const whitelist = ["paragraph", "quote", "bold"];
+    const schema = {
+      customize_toolbar: true,
+      toolbar: ["paragraph", "quote", "bold"],
+    };
 
     const expectedOutput = {
       type: "doc",
@@ -311,7 +360,7 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    expect(sanitizeRichText(input, whitelist)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
   });
 
   it('gracefully handles completely incompatible "object"', () => {
@@ -327,36 +376,62 @@ describe("sanitizeRichText", () => {
 describe("sanitizeAttrs", () => {
   describe("textAlign", () => {
     it("removes if specific value not allowed", () => {
-      expect(sanitizeAttrs({ level: 1, textAlign: "left" }, [])).toStrictEqual({
+      expect(
+        sanitizeAttrs(
+          { level: 1, textAlign: "left" },
+          { customize_toolbar: true, toolbar: [] },
+        ),
+      ).toStrictEqual({
         level: 1,
       });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-center"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "left" },
+          { customize_toolbar: true, toolbar: ["align-center"] },
+        ),
       ).toStrictEqual({ level: 1 });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-right"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "left" },
+          { customize_toolbar: true, toolbar: ["align-right"] },
+        ),
       ).toStrictEqual({ level: 1 });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-justify"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "left" },
+          { customize_toolbar: true, toolbar: ["align-justify"] },
+        ),
       ).toStrictEqual({ level: 1 });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "left" }, ["align-left"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "left" },
+          { customize_toolbar: true, toolbar: ["align-left"] },
+        ),
       ).toStrictEqual({ level: 1, textAlign: "left" });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "center" }, ["align-center"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "center" },
+          { customize_toolbar: true, toolbar: ["align-center"] },
+        ),
       ).toStrictEqual({ level: 1, textAlign: "center" });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "right" }, ["align-right"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "right" },
+          { customize_toolbar: true, toolbar: ["align-right"] },
+        ),
       ).toStrictEqual({ level: 1, textAlign: "right" });
 
       expect(
-        sanitizeAttrs({ level: 1, textAlign: "justify" }, ["align-justify"]),
+        sanitizeAttrs(
+          { level: 1, textAlign: "justify" },
+          { customize_toolbar: true, toolbar: ["align-justify"] },
+        ),
       ).toStrictEqual({ level: 1, textAlign: "justify" });
     });
   });

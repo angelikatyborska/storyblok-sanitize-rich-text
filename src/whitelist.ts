@@ -1,33 +1,50 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function isContentWhitelisted(content: any, whitelist: string[]) {
+import type { RelevantRichTextFieldSchema } from "./schema.ts";
+
+function shouldCheckToolbar(schema: RelevantRichTextFieldSchema) {
+  return schema.customize_toolbar && Array.isArray(schema.toolbar);
+}
+
+export function isContentWhitelisted(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  content: any,
+  schema: RelevantRichTextFieldSchema,
+) {
   if (content && typeof content === "object" && "type" in content) {
     switch (content.type) {
       case "text":
         return true;
       case "paragraph":
-        return whitelist.includes("paragraph");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("paragraph")
+        );
       case "heading":
-        return whitelist.includes(`h${content.attrs.level}`);
+        return (
+          !shouldCheckToolbar(schema) ||
+          schema.toolbar?.includes(`h${content.attrs.level}`)
+        );
       case "horizontal_rule":
-        return whitelist.includes("hrule");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("hrule");
       case "image":
-        return whitelist.includes("image");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("image");
       case "blockquote":
-        return whitelist.includes("quote");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("quote");
       case "bullet_list":
-        return whitelist.includes("list");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("list");
       case "ordered_list":
-        return whitelist.includes("olist");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("olist");
       case "code_block":
-        return whitelist.includes("code");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("code");
       case "table":
-        return whitelist.includes("add-table");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("add-table")
+        );
       case "tableHeader":
         // the rich text object does not differentiate between header columns, rows, or cells, it's all cells
         return (
-          whitelist.includes("toggle-header-column") ||
-          whitelist.includes("toggle-header-row") ||
-          whitelist.includes("toggle-header-cell")
+          !shouldCheckToolbar(schema) ||
+          schema.toolbar?.includes("toggle-header-column") ||
+          schema.toolbar?.includes("toggle-header-row") ||
+          schema.toolbar?.includes("toggle-header-cell")
         );
 
       // allow all unknown blocks
@@ -42,26 +59,42 @@ export function isContentWhitelisted(content: any, whitelist: string[]) {
 export function isMarkWhitelisted(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mark: any,
-  whitelist: string[],
+  schema: RelevantRichTextFieldSchema,
 ) {
   if (mark && typeof mark === "object" && "type" in mark) {
     switch (mark.type) {
       case "bold":
-        return whitelist.includes("bold");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("bold");
       case "underline":
-        return whitelist.includes("underline");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("underline")
+        );
       case "textStyle":
-        return whitelist.includes("color");
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("color");
       case "highlight":
-        return whitelist.includes("highlight");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("highlight")
+        );
       case "strike":
-        return whitelist.includes("strike");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("strike")
+        );
       case "superscript":
-        return whitelist.includes("superscript");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("superscript")
+        );
       case "subscript":
-        return whitelist.includes("subscript");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("subscript")
+        );
       case "code":
-        return whitelist.includes("inlinecode");
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("inlinecode")
+        );
+      case "emoji":
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("emoji");
+      case "link":
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("link");
       // allow all unknown marks
       default:
         return true;
@@ -75,17 +108,35 @@ export function isAttrWhitelisted(
   attrName: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attrValue: any,
-  whitelist: string[],
+  schema: RelevantRichTextFieldSchema,
 ) {
   switch (attrName) {
     case "textAlign":
-      return whitelist.includes(`align-${attrValue}`);
+      return (
+        !shouldCheckToolbar(schema) ||
+        schema.toolbar?.includes(`align-${attrValue}`)
+      );
     // is such a generic attr name really used only for cell-colors? hopefully, because this check is not aware of the context
     case "backgroundColor":
-      return whitelist.includes("cell-color");
+      return (
+        !shouldCheckToolbar(schema) || schema.toolbar?.includes("cell-color")
+      );
     case "colspan":
     case "rowspan":
-      return attrValue > 1 ? whitelist.includes("merge-cells") : true;
+      return attrValue > 1
+        ? !shouldCheckToolbar(schema) || schema.toolbar?.includes("merge-cells")
+        : true;
+    case "dir":
+      // ltr or rtl
+      return (
+        (schema.rtl && !shouldCheckToolbar(schema)) ||
+        schema.toolbar?.includes(attrValue)
+      );
+    case "target":
+      return attrValue === "_blank" ? schema.allow_target_blank : true;
+    case "custom":
+      // custom attributes on links
+      return schema.allow_custom_attributes;
     // allow all unknown attributes
     default:
       return true;

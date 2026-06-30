@@ -4,7 +4,20 @@ import {
   isMarkWhitelisted,
 } from "./whitelist.ts";
 
-export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
+import {
+  getRelevantRichTextSchema,
+  type RelevantRichTextFieldSchema,
+} from "./schema.ts";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function sanitizeRichText<T>(object: T, schema: any): T {
+  const relevantSchema = getRelevantRichTextSchema(schema);
+  return doSanitizeRichText(object, relevantSchema);
+}
+function doSanitizeRichText<T>(
+  object: T,
+  schema: RelevantRichTextFieldSchema,
+): T {
   if (
     object &&
     typeof object === "object" &&
@@ -16,8 +29,8 @@ export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
       content: object["content"]
         .map((child) => {
           if (child && typeof child === "object") {
-            if (isContentWhitelisted(child, whitelist)) {
-              return sanitizeRichText(child, whitelist);
+            if (isContentWhitelisted(child, schema)) {
+              return doSanitizeRichText(child, schema);
             } else {
               return null;
             }
@@ -38,7 +51,7 @@ export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
   ) {
     object = {
       ...object,
-      attrs: sanitizeAttrs(object["attrs"], whitelist),
+      attrs: sanitizeAttrs(object["attrs"], schema),
     };
   }
 
@@ -54,7 +67,7 @@ export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
       marks: object["marks"]
         .map((mark) => {
           if (mark && typeof mark === "object") {
-            if (isMarkWhitelisted(mark, whitelist)) {
+            if (isMarkWhitelisted(mark, schema)) {
               return mark;
             } else {
               return null;
@@ -73,11 +86,11 @@ export function sanitizeRichText<T>(object: T, whitelist: string[]): T {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function sanitizeAttrs<T extends Record<any, any>>(
   object: T,
-  whitelist: string[],
+  schema: RelevantRichTextFieldSchema,
 ): Partial<T> {
   return Object.keys(object).reduce(
     (acc, key) => {
-      if (isAttrWhitelisted(key, acc[key], whitelist)) {
+      if (isAttrWhitelisted(key, acc[key], schema)) {
         return acc;
       } else {
         delete acc[key];
