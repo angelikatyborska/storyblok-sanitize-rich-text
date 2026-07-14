@@ -1,4 +1,5 @@
 import type { RelevantRichTextFieldSchema } from "./schema.ts";
+import type { Options } from "./options.ts";
 
 function shouldCheckToolbar(schema: RelevantRichTextFieldSchema) {
   return schema.customize_toolbar && Array.isArray(schema.toolbar);
@@ -8,11 +9,14 @@ export function isContentWhitelisted(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any,
   schema: RelevantRichTextFieldSchema,
+  options: Options,
 ) {
   if (content && typeof content === "object" && "type" in content) {
     switch (content.type) {
       case "text":
         return true;
+      case "hard_break":
+        return options.allowHardBreak;
       case "paragraph":
         return (
           !shouldCheckToolbar(schema) || schema.toolbar?.includes("paragraph")
@@ -57,6 +61,8 @@ export function isContentWhitelisted(
 }
 
 export function isMarkWhitelisted(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  object: any,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mark: any,
   schema: RelevantRichTextFieldSchema,

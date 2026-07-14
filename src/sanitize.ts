@@ -8,15 +8,22 @@ import {
   getRelevantRichTextSchema,
   type RelevantRichTextFieldSchema,
 } from "./schema.ts";
+import { defaultOptions, type Options } from "./options.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function sanitizeRichText<T>(object: T, schema: any): T {
+export function sanitizeRichText<T>(
+  object: T,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  schema: any,
+  options: Partial<Options>,
+): T {
   const relevantSchema = getRelevantRichTextSchema(schema);
-  return doSanitizeRichText(object, relevantSchema);
+  const mergedOptions = { ...defaultOptions, ...options };
+  return doSanitizeRichText(object, relevantSchema, mergedOptions);
 }
 function doSanitizeRichText<T>(
   object: T,
   schema: RelevantRichTextFieldSchema,
+  options: Options,
 ): T {
   if (
     object &&
@@ -29,8 +36,8 @@ function doSanitizeRichText<T>(
       content: object["content"]
         .map((child) => {
           if (child && typeof child === "object") {
-            if (isContentWhitelisted(child, schema)) {
-              return doSanitizeRichText(child, schema);
+            if (isContentWhitelisted(child, schema, options)) {
+              return doSanitizeRichText(child, schema, options);
             } else {
               return null;
             }
@@ -67,7 +74,7 @@ function doSanitizeRichText<T>(
       marks: object["marks"]
         .map((mark) => {
           if (mark && typeof mark === "object") {
-            if (isMarkWhitelisted(mark, schema)) {
+            if (isMarkWhitelisted(object, mark, schema)) {
               return mark;
             } else {
               return null;

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { sanitizeAttrs, sanitizeRichText } from "../src/sanitize.ts";
+import { defaultOptions } from "../src/options.ts";
 
 describe("sanitizeRichText", () => {
   it("removes nothing if customize toolbar is turned off", () => {
@@ -45,7 +46,9 @@ describe("sanitizeRichText", () => {
 
     const schema = { customize_toolbar: false, toolbar: [] };
 
-    expect(sanitizeRichText(input, schema)).toStrictEqual(input);
+    expect(sanitizeRichText(input, schema, defaultOptions)).toStrictEqual(
+      input,
+    );
   });
 
   it("removes everything if whitelist is empty", () => {
@@ -86,6 +89,7 @@ describe("sanitizeRichText", () => {
             },
           ],
         },
+        { type: "hard_break" },
       ],
     };
 
@@ -93,10 +97,12 @@ describe("sanitizeRichText", () => {
 
     const expectedOutput = {
       type: "doc",
-      content: [],
+      content: [{ type: "hard_break" }],
     };
 
-    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema, defaultOptions)).toStrictEqual(
+      expectedOutput,
+    );
   });
 
   it("keeps block elements allowed by the whitelist", () => {
@@ -115,6 +121,7 @@ describe("sanitizeRichText", () => {
             },
           ],
         },
+        { type: "hard_break" },
         {
           type: "heading",
           attrs: {
@@ -145,6 +152,7 @@ describe("sanitizeRichText", () => {
     const expectedOutput = {
       type: "doc",
       content: [
+        { type: "hard_break" },
         {
           type: "heading",
           attrs: {
@@ -160,7 +168,9 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema, defaultOptions)).toStrictEqual(
+      expectedOutput,
+    );
   });
 
   it("removes nested block elements if not allowed", () => {
@@ -220,7 +230,57 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema, defaultOptions)).toStrictEqual(
+      expectedOutput,
+    );
+  });
+
+  it("removes hard breaks if option passed", () => {
+    const input = {
+      type: "doc",
+      content: [
+        {
+          type: "heading",
+          attrs: {
+            level: 1,
+          },
+          content: [
+            {
+              text: "Heading 1",
+              type: "text",
+            },
+          ],
+        },
+        { type: "hard_break" },
+      ],
+    };
+
+    const schema = { customize_toolbar: false, toolbar: [] };
+
+    const expectedOutput = {
+      type: "doc",
+      content: [
+        {
+          type: "heading",
+          attrs: {
+            level: 1,
+          },
+          content: [
+            {
+              text: "Heading 1",
+              type: "text",
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(
+      sanitizeRichText(input, schema, {
+        ...defaultOptions,
+        allowHardBreak: false,
+      }),
+    ).toStrictEqual(expectedOutput);
   });
 
   it("removes inline formatting from various block elements", () => {
@@ -360,14 +420,16 @@ describe("sanitizeRichText", () => {
       ],
     };
 
-    expect(sanitizeRichText(input, schema)).toStrictEqual(expectedOutput);
+    expect(sanitizeRichText(input, schema, defaultOptions)).toStrictEqual(
+      expectedOutput,
+    );
   });
 
   it('gracefully handles completely incompatible "object"', () => {
-    expect(sanitizeRichText("", [])).toBe("");
-    expect(sanitizeRichText("hello", [])).toBe("hello");
-    expect(sanitizeRichText([], [])).toStrictEqual([]);
-    expect(sanitizeRichText({ type: "doc" }, [])).toStrictEqual({
+    expect(sanitizeRichText("", [], defaultOptions)).toBe("");
+    expect(sanitizeRichText("hello", [], defaultOptions)).toBe("hello");
+    expect(sanitizeRichText([], [], defaultOptions)).toStrictEqual([]);
+    expect(sanitizeRichText({ type: "doc" }, [], defaultOptions)).toStrictEqual({
       type: "doc",
     });
   });
