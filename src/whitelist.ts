@@ -95,6 +95,10 @@ export function isMarkWhitelisted(
         return !shouldCheckToolbar(schema) || schema.toolbar?.includes("emoji");
       case "link":
         return !shouldCheckToolbar(schema) || schema.toolbar?.includes("link");
+      case "anchor":
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("anchor")
+        );
       // allow all unknown marks
       default:
         return true;

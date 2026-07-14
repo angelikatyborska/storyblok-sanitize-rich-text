@@ -557,6 +557,22 @@ describe("isMarkWhitelisted", () => {
       expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
+
+  describe("anchor", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "anchor",
+        attrs: {
+          id: "foobar",
+        },
+      };
+
+      expect(isMarkWhitelisted(input, toolbar(["anchor"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "anchor"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
+    });
+  });
 });
 
 describe("isAttrWhitelisted", () => {
