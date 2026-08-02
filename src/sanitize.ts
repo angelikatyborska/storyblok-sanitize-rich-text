@@ -12,19 +12,56 @@ import { defaultOptions, type Options } from "./options.ts";
 
 export function sanitizeRichText<T>(
   object: T,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: any,
-  options: Partial<Options>,
+  options?: Partial<Options>,
 ): T {
   const relevantSchema = getRelevantRichTextSchema(schema);
   const mergedOptions = { ...defaultOptions, ...options };
-  return doSanitizeRichText(object, relevantSchema, mergedOptions);
+
+  if (
+    object &&
+    typeof object === "object" &&
+    "type" in object &&
+    object["type"] === "doc" &&
+    "content" in object &&
+    Array.isArray(object["content"])
+  ) {
+    return {
+      ...object,
+      content: object.content
+        .flatMap((child) =>
+          doSanitizeRichText(child, relevantSchema, mergedOptions),
+        )
+        .filter((child: any) => !!child),
+    };
+  } else {
+    return object;
+  }
 }
+
 function doSanitizeRichText<T>(
   object: T,
   schema: RelevantRichTextFieldSchema,
   options: Options,
-): T {
+): T | null {
+  if (!isContentWhitelisted(object, schema, options)) {
+    let mappedObject = options.contentMapper(object);
+
+    if (mappedObject) {
+      if (typeof mappedObject === "object" && Array.isArray(mappedObject)) {
+        mappedObject = mappedObject.flatMap((innerChild) =>
+          doSanitizeRichText(innerChild, schema, options),
+        );
+      } else {
+        mappedObject = doSanitizeRichText(mappedObject, schema, options);
+      }
+
+      object = mappedObject;
+    } else {
+      return null;
+    }
+  }
+
   if (
     object &&
     typeof object === "object" &&
@@ -34,13 +71,9 @@ function doSanitizeRichText<T>(
     object = {
       ...object,
       content: object["content"]
-        .map((child) => {
+        .flatMap((child) => {
           if (child && typeof child === "object") {
-            if (isContentWhitelisted(child, schema, options)) {
-              return doSanitizeRichText(child, schema, options);
-            } else {
-              return null;
-            }
+            return doSanitizeRichText(child, schema, options);
           } else {
             return child;
           }
@@ -58,7 +91,7 @@ function doSanitizeRichText<T>(
   ) {
     object = {
       ...object,
-      attrs: sanitizeAttrs(object["attrs"], schema),
+      attrs: sanitizeAttrs(object["attrs"], schema, options),
     };
   }
 
@@ -72,35 +105,48 @@ function doSanitizeRichText<T>(
     object = {
       ...object,
       marks: object["marks"]
-        .map((mark) => {
+        .flatMap((mark) => {
           if (mark && typeof mark === "object") {
-            if (isMarkWhitelisted(object, mark, schema)) {
+            if (isMarkWhitelisted(mark, schema)) {
               return mark;
             } else {
-              return null;
+              const newMark = options.markMapper(object, mark);
+              if (newMark) {
+                return newMark;
+              } else {
+                return null;
+              }
             }
           } else {
             return mark;
           }
         })
-        .filter((mark) => mark !== null),
+        .filter((mark) => mark !== null && mark !== undefined),
     };
   }
 
   return object;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function sanitizeAttrs<T extends Record<any, any>>(
   object: T,
   schema: RelevantRichTextFieldSchema,
-): Partial<T> {
+  options: Options,
+): T {
   return Object.keys(object).reduce(
     (acc, key) => {
       if (isAttrWhitelisted(key, acc[key], schema)) {
         return acc;
       } else {
+        const newAttr = options.attributeMapper(object, key, acc[key]);
         delete acc[key];
+
+        if (newAttr) {
+          const newKey = newAttr[0] as keyof T;
+          const newValue = newAttr[1] as T[keyof T];
+          acc = { ...acc, [newKey]: newValue };
+        }
+
         return acc;
       }
     },

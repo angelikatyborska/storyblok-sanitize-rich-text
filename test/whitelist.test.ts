@@ -541,11 +541,25 @@ describe("isMarkWhitelisted", () => {
         type: "bold",
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "bold"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["underline"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "bold"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["underline"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
+    });
+  });
+
+  describe("italic", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "italic",
+      };
+
+      expect(isMarkWhitelisted(input, toolbar(["italic"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "italic"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -555,13 +569,11 @@ describe("isMarkWhitelisted", () => {
         type: "underline",
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["underline"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "underline"]))).toBe(
-        true,
-      );
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["underline"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "underline"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -574,11 +586,11 @@ describe("isMarkWhitelisted", () => {
         },
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["color"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "color"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["color"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "color"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -591,13 +603,11 @@ describe("isMarkWhitelisted", () => {
         },
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["highlight"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "highlight"]))).toBe(
-        true,
-      );
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["highlight"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "highlight"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -607,13 +617,11 @@ describe("isMarkWhitelisted", () => {
         type: "strike",
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["strike"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "strike"]))).toBe(
-        true,
-      );
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["strike"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "strike"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -623,13 +631,13 @@ describe("isMarkWhitelisted", () => {
         type: "superscript",
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["superscript"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "superscript"]))).toBe(
+      expect(isMarkWhitelisted(input, toolbar(["superscript"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "superscript"]))).toBe(
         true,
       );
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -639,13 +647,11 @@ describe("isMarkWhitelisted", () => {
         type: "subscript",
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["subscript"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "subscript"]))).toBe(
-        true,
-      );
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["h1"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["subscript"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "subscript"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["h1"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -656,13 +662,13 @@ describe("isMarkWhitelisted", () => {
       };
 
       // code = code block, inlinecode = inline code
-      expect(isMarkWhitelisted({}, input, toolbar(["inlinecode"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "inlinecode"]))).toBe(
+      expect(isMarkWhitelisted(input, toolbar(["inlinecode"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "inlinecode"]))).toBe(
         true,
       );
-      expect(isMarkWhitelisted({}, input, toolbar(["code"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["code"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -679,11 +685,11 @@ describe("isMarkWhitelisted", () => {
       };
 
       // code = code block, inlinecode = inline code
-      expect(isMarkWhitelisted({}, input, toolbar(["emoji"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "emoji"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["code"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["emoji"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "emoji"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["code"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -700,11 +706,11 @@ describe("isMarkWhitelisted", () => {
         },
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["link"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "link"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["code"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["link"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "link"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["code"]))).toBe(false);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 
@@ -717,12 +723,10 @@ describe("isMarkWhitelisted", () => {
         },
       };
 
-      expect(isMarkWhitelisted({}, input, toolbar(["anchor"]))).toBe(true);
-      expect(isMarkWhitelisted({}, input, toolbar(["h2", "anchor"]))).toBe(
-        true,
-      );
-      expect(isMarkWhitelisted({}, input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted({}, input, noToolbar())).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["anchor"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["h2", "anchor"]))).toBe(true);
+      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
 });

@@ -7,7 +7,6 @@ export interface RelevantRichTextFieldSchema {
 }
 
 export function getRelevantRichTextSchema(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   schema: any,
 ): RelevantRichTextFieldSchema {
   const relevant: RelevantRichTextFieldSchema = {};

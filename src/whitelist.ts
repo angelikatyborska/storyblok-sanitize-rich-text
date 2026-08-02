@@ -6,7 +6,6 @@ function shouldCheckToolbar(schema: RelevantRichTextFieldSchema) {
 }
 
 export function isContentWhitelisted(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content: any,
   schema: RelevantRichTextFieldSchema,
   options: Options,
@@ -61,9 +60,6 @@ export function isContentWhitelisted(
 }
 
 export function isMarkWhitelisted(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  object: any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   mark: any,
   schema: RelevantRichTextFieldSchema,
 ) {
@@ -71,6 +67,10 @@ export function isMarkWhitelisted(
     switch (mark.type) {
       case "bold":
         return !shouldCheckToolbar(schema) || schema.toolbar?.includes("bold");
+      case "italic":
+        return (
+          !shouldCheckToolbar(schema) || schema.toolbar?.includes("italic")
+        );
       case "underline":
         return (
           !shouldCheckToolbar(schema) || schema.toolbar?.includes("underline")
@@ -116,7 +116,6 @@ export function isMarkWhitelisted(
 
 export function isAttrWhitelisted(
   attrName: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attrValue: any,
   schema: RelevantRichTextFieldSchema,
 ) {

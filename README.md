@@ -1,6 +1,15 @@
 # Storyblok Sanitize RichText
 
+## Installation
+
+```bash
+npm install storyblok-sanitize-rich-text
+```
+
 ## Usage
+
+warn: emoji
+warn: paragraph not whitelisted when using the mapper
 
 ## Options
 
