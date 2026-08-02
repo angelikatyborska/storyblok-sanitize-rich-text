@@ -10,6 +10,8 @@ npm install storyblok-sanitize-rich-text
 
 warn: emoji
 warn: paragraph not whitelisted when using the mapper
+warn: mapper's output gets validated
+warn: user's responsibility to create mappers that do not loop
 
 ## Options
 

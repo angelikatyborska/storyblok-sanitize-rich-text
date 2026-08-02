@@ -603,6 +603,134 @@ describe("sanitizeRichText", () => {
       );
     });
 
+    it("runs the mapper on the output of the mapper", () => {
+      const input = {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: {
+              level: 1,
+            },
+            content: [
+              {
+                text: "Heading 1",
+                type: "text",
+              },
+            ],
+          },
+          {
+            type: "heading",
+            attrs: {
+              level: 2,
+            },
+            content: [
+              {
+                text: "Heading 2",
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+
+      const schema = { customize_toolbar: true, toolbar: ["h2"] };
+
+      const expectedOutput = {
+        type: "doc",
+        content: [
+          // h1 replaced with a paragraph, that then gets removed by a second run of the mapper
+          {
+            type: "heading",
+            attrs: {
+              level: 2,
+            },
+            content: [
+              {
+                text: "Heading 2",
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+
+      const options = {
+        ...defaultOptions,
+        allowHardBreak: false,
+        contentMapper: (content: any) => {
+          if (content.type === "heading") {
+            return {
+              ...content,
+              type: "paragraph",
+            };
+          } else {
+            return null;
+          }
+        },
+      };
+
+      expect(sanitizeRichText(input, schema, options)).toStrictEqual(
+        expectedOutput,
+      );
+    });
+
+    // This behavior is necessary for the library core function. Certain components are "wrappers".
+    // E.g. a blockquote can contain paragraphs, headings, lists etc., a list item can contain a list.
+    // The mappers need to be able to "unwrap" content, and still provide whitelisting for the nested content.
+    it("crashes if the mapper creates an infinite loop", () => {
+      const input = {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: {
+              level: 1,
+            },
+            content: [
+              {
+                text: "Heading 1",
+                type: "text",
+              },
+            ],
+          },
+          {
+            type: "heading",
+            attrs: {
+              level: 2,
+            },
+            content: [
+              {
+                text: "Heading 2",
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+
+      const schema = { customize_toolbar: true, toolbar: ["paragraph"] };
+
+      const options = {
+        ...defaultOptions,
+        contentMapper: (content: any) => {
+          if (content.type === "heading") {
+            return {
+              ...content,
+              attrs: {
+                // swapped heading levels, even though neither is allowed, will cause an infinite loop
+                level: content.attrs.level === 1 ? 2 : 1,
+              },
+            };
+          }
+        },
+      };
+
+      expect(() => sanitizeRichText(input, schema, options)).toThrow(
+        "Maximum call stack size exceeded",
+      );
+    });
+
     it("still checks nested content, marks, and attrs of mapped content", () => {
       const input = {
         type: "doc",
