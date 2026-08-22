@@ -5,12 +5,7 @@
   "files": [
     "README.md",
     "LICENSE",
-    "./dist/index.js",
-    "./dist/index.cjs",
-    "./dist/index.d.ts",
-    "./dist/mappers.js",
-    "./dist/mappers.cjs",
-    "./dist/mappers.d.ts"
+    "./dist/*"
   ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
