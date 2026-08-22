@@ -45,7 +45,13 @@ function doSanitizeRichText<T>(
   options: Options,
 ): T | null {
   if (!isContentWhitelisted(object, schema, options)) {
+    const objectStringBefore = JSON.stringify(object);
     let mappedObject = options.contentMapper(object);
+    const objectStringAfter = JSON.stringify(mappedObject);
+
+    if (objectStringBefore === objectStringAfter) {
+      throw new UnchangedContentMappingError(object);
+    }
 
     if (mappedObject) {
       if (typeof mappedObject === "object" && Array.isArray(mappedObject)) {
@@ -152,4 +158,12 @@ export function sanitizeAttrs<T extends Record<any, any>>(
     },
     { ...object },
   );
+}
+
+export class UnchangedContentMappingError extends Error {
+  constructor(content: any) {
+    const message = `The following content was passed to the mapper function and returned unchanged. It might mean that the mapper returns content that is not allowed by the whitelist. This is not supported.\n${JSON.stringify(content, null, 2)}`;
+    super(message);
+    this.name = "UnchangedContentMappingError";
+  }
 }

@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { sanitizeAttrs, sanitizeRichText } from "../src/sanitize.ts";
+import {
+  sanitizeAttrs,
+  sanitizeRichText,
+  UnchangedContentMappingError,
+} from "../src/sanitize.ts";
 import { defaultOptions } from "../src/options.ts";
 import {
   type MarkMapper,
@@ -766,10 +770,96 @@ describe("sanitizeRichText", () => {
       );
     });
 
+    it("throws UnchangedContentMappingError if the mapper does not modify not allowed content", () => {
+      const input = {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: {
+              level: 1,
+            },
+            content: [
+              {
+                text: "Heading 1",
+                type: "text",
+              },
+            ],
+          },
+          {
+            type: "heading",
+            attrs: {
+              level: 2,
+            },
+            content: [
+              {
+                text: "Heading 2",
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+
+      const schema = { customize_toolbar: true, toolbar: ["paragraph"] };
+
+      const options = {
+        ...defaultOptions,
+        contentMapper: (content: any) => content,
+      };
+
+      expect(() => sanitizeRichText(input, schema, options)).toThrow(
+        UnchangedContentMappingError,
+      );
+    });
+
     // This behavior is necessary for the library core function. Certain components are "wrappers".
     // E.g. a blockquote can contain paragraphs, headings, lists etc., a list item can contain a list.
     // The mappers need to be able to "unwrap" content, and still provide whitelisting for the nested content.
-    it("crashes if the mapper creates an infinite loop", () => {
+    it("throws UnchangedContentMappingError if the mapper returns modified content that is not allowed because it loops", () => {
+      const input = {
+        type: "doc",
+        content: [
+          {
+            type: "heading",
+            attrs: {
+              level: 1,
+            },
+            content: [
+              {
+                text: "Heading 1",
+                type: "text",
+              },
+            ],
+          },
+          {
+            type: "heading",
+            attrs: {
+              level: 2,
+            },
+            content: [
+              {
+                text: "Heading 2",
+                type: "text",
+              },
+            ],
+          },
+        ],
+      };
+
+      const schema = { customize_toolbar: true, toolbar: ["h1"] };
+
+      const options = {
+        ...defaultOptions,
+        contentMapper: (content: any) => ({ ...content, type: "paragraph" }),
+      };
+
+      expect(() => sanitizeRichText(input, schema, options)).toThrow(
+        UnchangedContentMappingError,
+      );
+    });
+
+    it("throws 'Maximum call stack size exceeded' if the mapper has an infinite loop that changes the content", () => {
       const input = {
         type: "doc",
         content: [
