@@ -3,7 +3,7 @@ import { sanitizeAttrs, sanitizeRichText } from "../src/sanitize.ts";
 import { defaultOptions } from "../src/options.ts";
 import {
   type MarkMapper,
-  turnContentToParagraphOrRemove,
+  turnContentIntoParagraphOrRemove,
 } from "../src/mappers.ts";
 
 describe("sanitizeRichText", () => {
@@ -1395,7 +1395,7 @@ describe("sanitizeRichText", () => {
 
       const options = {
         ...defaultOptions,
-        contentMapper: turnContentToParagraphOrRemove,
+        contentMapper: turnContentIntoParagraphOrRemove,
       };
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
