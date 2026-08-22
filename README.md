@@ -51,8 +51,8 @@ import { sanitizeRichText } from "storyblok-sanitize-rich-text";
 
 <StoryblokRichText
   document={sanitizeRichText(
-    my_rich_text_field_value,
-    component.schema.my_rich_text_field,
+    yourRichTextFieldValue,
+    component.schema.yourRichTextField,
   )}
 />;
 ```
