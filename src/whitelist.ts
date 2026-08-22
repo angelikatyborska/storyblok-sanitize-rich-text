@@ -14,6 +14,8 @@ export function isContentWhitelisted(
     switch (content.type) {
       case "text":
         return true;
+      case "emoji":
+        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("emoji");
       case "hard_break":
         return options.allowHardBreak;
       case "paragraph":
@@ -97,8 +99,6 @@ export function isMarkWhitelisted(
         return (
           !shouldCheckToolbar(schema) || schema.toolbar?.includes("inlinecode")
         );
-      case "emoji":
-        return !shouldCheckToolbar(schema) || schema.toolbar?.includes("emoji");
       case "link":
         return !shouldCheckToolbar(schema) || schema.toolbar?.includes("link");
       case "anchor":

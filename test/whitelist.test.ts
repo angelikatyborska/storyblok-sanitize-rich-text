@@ -39,6 +39,27 @@ describe("isContentWhitelisted", () => {
     });
   });
 
+  describe("emoji", () => {
+    it("simple type match", () => {
+      const input = {
+        type: "emoji",
+        attrs: {
+          name: "nerd_face",
+          emoji: "🤓",
+          fallbackImage:
+            "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f913.png",
+        },
+      };
+
+      // code = code block, inlinecode = inline code
+      expect(isContentWhitelisted(input, toolbar(["emoji"]), defaultOptions)).toBe(true);
+      expect(isContentWhitelisted(input, toolbar(["h2", "emoji"]), defaultOptions)).toBe(true);
+      expect(isContentWhitelisted(input, toolbar(["code"]), defaultOptions)).toBe(false);
+      expect(isContentWhitelisted(input, toolbar(["bold"]), defaultOptions)).toBe(false);
+      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
+    });
+  });
+
   describe("hard_break", () => {
     it("not a toolbar option, but an additional option", () => {
       const input = {
@@ -666,27 +687,6 @@ describe("isMarkWhitelisted", () => {
       expect(isMarkWhitelisted(input, toolbar(["h2", "inlinecode"]))).toBe(
         true,
       );
-      expect(isMarkWhitelisted(input, toolbar(["code"]))).toBe(false);
-      expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
-      expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
-    });
-  });
-
-  describe("emoji", () => {
-    it("simple type match", () => {
-      const input = {
-        type: "emoji",
-        attrs: {
-          name: "nerd_face",
-          emoji: "🤓",
-          fallbackImage:
-            "https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f913.png",
-        },
-      };
-
-      // code = code block, inlinecode = inline code
-      expect(isMarkWhitelisted(input, toolbar(["emoji"]))).toBe(true);
-      expect(isMarkWhitelisted(input, toolbar(["h2", "emoji"]))).toBe(true);
       expect(isMarkWhitelisted(input, toolbar(["code"]))).toBe(false);
       expect(isMarkWhitelisted(input, toolbar(["bold"]))).toBe(false);
       expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
