@@ -1,7 +1,7 @@
 {
   "name": "storyblok-sanitize-rich-text",
   "version": "0.0.1",
-  "description": "",
+  "description": "Removes undesirable formatting options from Storyblok rich text objects based on the rich text field's schema.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -32,7 +32,7 @@
     "richtext",
     "sanitizer"
   ],
-  "author": "",
+  "author": "Angelika Cathor",
   "license": "MIT",
   "packageManager": "pnpm@11.5.2",
   "type": "module",
