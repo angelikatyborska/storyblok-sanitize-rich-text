@@ -651,6 +651,35 @@ describe("mappers", () => {
           expectedResult,
         );
       });
+
+      it("uses specified heading level", () => {
+        const input = {
+          type: "paragraph",
+          content: [
+            {
+              text: "Lorem impsum",
+              type: "text",
+            },
+          ],
+        };
+
+        const expectedResult = {
+          type: "heading",
+          attrs: {
+            level: 5,
+          },
+          content: [
+            {
+              text: "Lorem impsum",
+              type: "text",
+            },
+          ],
+        };
+
+        expect(turnContentIntoHeadingOrRemove(5)(input)).toStrictEqual(
+          expectedResult,
+        );
+      });
     });
 
     describe("heading", () => {
