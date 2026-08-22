@@ -2,15 +2,27 @@
   "name": "storyblok-sanitize-rich-text",
   "version": "0.0.1",
   "description": "Removes undesirable formatting options from Storyblok rich text objects based on the rich text field's schema.",
+  "files": [
+    "README.md",
+    "LICENSE",
+    "./dist/index.js",
+    "./dist/index.cjs",
+    "./dist/index.d.ts",
+    "./dist/mappers.js",
+    "./dist/mappers.cjs",
+    "./dist/mappers.d.ts"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./mappers": {
+      "types": "./dist/mappers.d.ts",
       "import": "./dist/mappers.js",
       "require": "./dist/mappers.cjs"
     }
@@ -25,6 +37,13 @@
     "format": "pnpm format:prettier && pnpm format:js",
     "format:js": "pnpm lint:js --fix",
     "format:prettier": "prettier --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://https://github.com/angelikatyborska/storyblok-sanitize-rich-text.git"
+  },
+  "bugs": {
+    "url": "https://https://github.com/angelikatyborska/storyblok-sanitize-rich-text/issues"
   },
   "keywords": [
     "storyblok",
