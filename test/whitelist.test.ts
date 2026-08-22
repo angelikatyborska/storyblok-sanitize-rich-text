@@ -52,11 +52,21 @@ describe("isContentWhitelisted", () => {
       };
 
       // code = code block, inlinecode = inline code
-      expect(isContentWhitelisted(input, toolbar(["emoji"]), defaultOptions)).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2", "emoji"]), defaultOptions)).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["code"]), defaultOptions)).toBe(false);
-      expect(isContentWhitelisted(input, toolbar(["bold"]), defaultOptions)).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
+      expect(
+        isContentWhitelisted(input, toolbar(["emoji"]), defaultOptions),
+      ).toBe(true);
+      expect(
+        isContentWhitelisted(input, toolbar(["h2", "emoji"]), defaultOptions),
+      ).toBe(true);
+      expect(
+        isContentWhitelisted(input, toolbar(["code"]), defaultOptions),
+      ).toBe(false);
+      expect(
+        isContentWhitelisted(input, toolbar(["bold"]), defaultOptions),
+      ).toBe(false);
+      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
+        true,
+      );
     });
   });
 
