@@ -1,9 +1,15 @@
+type StyleOptions = Array<{
+  name: string;
+  value: string;
+}>;
+
 export interface RelevantRichTextFieldSchema {
   toolbar?: string[];
   rtl?: boolean;
   allow_target_blank?: boolean;
   allow_custom_attributes?: boolean;
   customize_toolbar?: boolean;
+  style_options?: StyleOptions;
 }
 
 export function getRelevantRichTextSchema(
@@ -30,6 +36,10 @@ export function getRelevantRichTextSchema(
     if ("allow_custom_attributes" in schema) {
       relevant.allow_custom_attributes =
         schema.allow_custom_attributes as boolean;
+    }
+
+    if ("style_options" in schema) {
+      relevant.style_options = schema.style_options as StyleOptions;
     }
   }
 

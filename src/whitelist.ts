@@ -105,6 +105,13 @@ export function isMarkWhitelisted(
         return (
           !shouldCheckToolbar(schema) || schema.toolbar?.includes("anchor")
         );
+      case "styled":
+        return (
+          !!schema.style_options &&
+          !!schema.style_options.find(
+            (option) => option.value === mark.attrs?.class,
+          )
+        );
       // allow all unknown marks
       default:
         return true;

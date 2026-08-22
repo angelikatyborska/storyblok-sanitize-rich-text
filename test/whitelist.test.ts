@@ -729,6 +729,49 @@ describe("isMarkWhitelisted", () => {
       expect(isMarkWhitelisted(input, noToolbar())).toBe(true);
     });
   });
+
+  describe("custom css class", () => {
+    it("value must match one of the options", () => {
+      const input = {
+        type: "styled",
+        attrs: {
+          class: "custom-class-2",
+        },
+      };
+
+      expect(
+        isMarkWhitelisted(input, {
+          ...toolbar([]),
+          style_options: [
+            {
+              name: "Custom Class 1",
+              value: "custom-class-1",
+            },
+            {
+              name: "Custom Class 2",
+              value: "custom-class-2",
+            },
+          ],
+        }),
+      ).toBe(true);
+
+      expect(
+        isMarkWhitelisted(input, {
+          ...toolbar([]),
+          style_options: [
+            {
+              name: "Custom Class 1",
+              value: "custom-class-1",
+            },
+          ],
+        }),
+      ).toBe(false);
+
+      expect(isMarkWhitelisted(input, toolbar([]))).toBe(false);
+      // Unlike other formatting options, this one is not available by default.
+      expect(isMarkWhitelisted(input, noToolbar())).toBe(false);
+    });
+  });
 });
 
 describe("isAttrWhitelisted", () => {

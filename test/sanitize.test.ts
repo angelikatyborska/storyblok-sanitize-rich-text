@@ -342,6 +342,12 @@ describe("sanitizeRichText", () => {
                     {
                       type: "underline",
                     },
+                    {
+                      type: "styled",
+                      attrs: {
+                        class: "gradient-red-500",
+                      },
+                    },
                   ],
                 },
                 {
@@ -356,6 +362,12 @@ describe("sanitizeRichText", () => {
                     },
                     {
                       type: "underline",
+                    },
+                    {
+                      type: "styled",
+                      attrs: {
+                        class: "custom-class",
+                      },
                     },
                     {
                       type: "highlight",
@@ -416,6 +428,85 @@ describe("sanitizeRichText", () => {
                   text: "ipsum",
                   type: "text",
                   marks: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(sanitizeRichText(input, schema, defaultOptions)).toStrictEqual(
+      expectedOutput,
+    );
+  });
+
+  it("keeps whitelisted custom CSS classes", () => {
+    const input = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          attrs: {
+            textAlign: null,
+          },
+          content: [
+            {
+              text: "Lorem ",
+              type: "text",
+              marks: [
+                {
+                  type: "styled",
+                  attrs: {
+                    class: "gradient-red-500",
+                  },
+                },
+              ],
+            },
+            {
+              text: "ipsum",
+              type: "text",
+              marks: [
+                {
+                  type: "styled",
+                  attrs: {
+                    class: "custom-class",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+
+    const schema = {
+      customize_toolbar: true,
+      toolbar: ["paragraph", "quote", "bold"],
+      style_options: [{ name: "Custom Class", value: "custom-class" }],
+    };
+
+    const expectedOutput = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          attrs: {},
+          content: [
+            {
+              text: "Lorem ",
+              type: "text",
+              marks: [],
+            },
+            {
+              text: "ipsum",
+              type: "text",
+              marks: [
+                {
+                  type: "styled",
+                  attrs: {
+                    class: "custom-class",
+                  },
                 },
               ],
             },
