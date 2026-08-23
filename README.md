@@ -30,7 +30,7 @@ In each component in which you wish to use the rich text sanitizer, import that 
 
 ```js
 // YourComponent.{astro,svelte,jsx...}
-// Note that the exact import path be different in your project.
+// Note that the exact import path may be different in your project.
 import component from "../../.storyblok/components/YOUR_SPACE_ID/YOUR_COMPONENT.json";
 ```
 
@@ -173,7 +173,7 @@ Removes all attributes.
 
 ### Emojis
 
-Emojis can be inserted into rich text fields in two different ways: as text noes or as emoji nodes. This library does not sanitize text nodes and will not remove emojis from text nodes. I recommend adding the emoji formatting option to the toolbar for each rich text field to consistently allow emojis in rich text fields regardless of how they were inserted.
+Emojis can be inserted into rich text fields in two different ways: as text nodes or as emoji nodes. This library does not sanitize text nodes and will not remove emojis from text nodes. I recommend adding the emoji formatting option to the toolbar for each rich text field to consistently allow emojis in rich text fields regardless of how they were inserted.
 
 ![Storyblok Sanitize Rich Text](https://raw.githubusercontent.com/angelikatyborska/storyblok-sanitize-rich-text/refs/heads/main/assets/emojis.png)
 
@@ -212,4 +212,4 @@ This library allows you to use the custom toolbar options as the source of truth
 
 ### Why doesn't this project provide more specific types for the rich text object?
 
-There are multiple packages that render Storyblok rich text objects. They come with different types. I wanted my library to compatible with all of them.
+There are multiple packages that render Storyblok rich text objects. They come with different types. I wanted my library to be compatible with all of them.
