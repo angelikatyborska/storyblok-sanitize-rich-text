@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   isAttrWhitelisted,
-  isContentWhitelisted,
+  isNodeWhitelisted,
   isMarkWhitelisted,
 } from "../src/whitelist.ts";
 import { defaultOptions } from "../src/options.ts";
@@ -23,19 +23,15 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(
+        isNodeWhitelisted(
           input,
           toolbar(["hrule", "ai-spelling"]),
           defaultOptions,
         ),
       ).toBe(true);
 
-      expect(isContentWhitelisted(input, toolbar([]), defaultOptions)).toBe(
-        true,
-      );
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, toolbar([]), defaultOptions)).toBe(true);
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -52,21 +48,19 @@ describe("isContentWhitelisted", () => {
       };
 
       // code = code block, inlinecode = inline code
-      expect(
-        isContentWhitelisted(input, toolbar(["emoji"]), defaultOptions),
-      ).toBe(true);
-      expect(
-        isContentWhitelisted(input, toolbar(["h2", "emoji"]), defaultOptions),
-      ).toBe(true);
-      expect(
-        isContentWhitelisted(input, toolbar(["code"]), defaultOptions),
-      ).toBe(false);
-      expect(
-        isContentWhitelisted(input, toolbar(["bold"]), defaultOptions),
-      ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["emoji"]), defaultOptions)).toBe(
         true,
       );
+      expect(
+        isNodeWhitelisted(input, toolbar(["h2", "emoji"]), defaultOptions),
+      ).toBe(true);
+      expect(isNodeWhitelisted(input, toolbar(["code"]), defaultOptions)).toBe(
+        false,
+      );
+      expect(isNodeWhitelisted(input, toolbar(["bold"]), defaultOptions)).toBe(
+        false,
+      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -76,24 +70,20 @@ describe("isContentWhitelisted", () => {
         type: "hard_break",
       };
 
-      expect(isContentWhitelisted(input, toolbar([]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar([]), defaultOptions)).toBe(true);
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         true,
       );
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
-        true,
-      );
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
 
       expect(
-        isContentWhitelisted(input, toolbar([]), {
+        isNodeWhitelisted(input, toolbar([]), {
           ...defaultOptions,
           allowHardBreak: false,
         }),
       ).toBe(false);
       expect(
-        isContentWhitelisted(input, noToolbar(), {
+        isNodeWhitelisted(input, noToolbar(), {
           ...defaultOptions,
           allowHardBreak: false,
         }),
@@ -117,25 +107,19 @@ describe("isContentWhitelisted", () => {
         ],
       };
 
-      expect(isContentWhitelisted(input, toolbar(["h1"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h1"]), defaultOptions)).toBe(
         true,
       );
       expect(
-        isContentWhitelisted(
-          input,
-          toolbar(["paragraph", "h1"]),
-          defaultOptions,
-        ),
+        isNodeWhitelisted(input, toolbar(["paragraph", "h1"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -155,24 +139,18 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(input, toolbar(["paragraph"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["paragraph"]), defaultOptions),
       ).toBe(true);
       expect(
-        isContentWhitelisted(
-          input,
-          toolbar(["h2", "paragraph"]),
-          defaultOptions,
-        ),
+        isNodeWhitelisted(input, toolbar(["h2", "paragraph"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -182,21 +160,19 @@ describe("isContentWhitelisted", () => {
         type: "horizontal_rule",
       };
 
+      expect(isNodeWhitelisted(input, toolbar(["hrule"]), defaultOptions)).toBe(
+        true,
+      );
       expect(
-        isContentWhitelisted(input, toolbar(["hrule"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["h2", "hrule"]), defaultOptions),
       ).toBe(true);
-      expect(
-        isContentWhitelisted(input, toolbar(["h2", "hrule"]), defaultOptions),
-      ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -216,17 +192,15 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(input, toolbar(["h2", "image"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["h2", "image"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -251,17 +225,15 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(input, toolbar(["h2", "quote"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["h2", "quote"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -291,17 +263,15 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(input, toolbar(["h2", "list"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["h2", "list"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -331,17 +301,15 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(input, toolbar(["h2", "olist"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["h2", "olist"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -362,17 +330,15 @@ describe("isContentWhitelisted", () => {
 
       // code = code block, inlinecode = inline code
       expect(
-        isContentWhitelisted(input, toolbar(["h2", "code"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["h2", "code"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -485,21 +451,15 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(
-          input,
-          toolbar(["h2", "add-table"]),
-          defaultOptions,
-        ),
+        isNodeWhitelisted(input, toolbar(["h2", "add-table"]), defaultOptions),
       ).toBe(true);
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 
@@ -529,7 +489,7 @@ describe("isContentWhitelisted", () => {
       };
 
       expect(
-        isContentWhitelisted(
+        isNodeWhitelisted(
           input,
           toolbar(["h2", "toggle-header-row"]),
           defaultOptions,
@@ -537,7 +497,7 @@ describe("isContentWhitelisted", () => {
       ).toBe(true);
 
       expect(
-        isContentWhitelisted(
+        isNodeWhitelisted(
           input,
           toolbar(["h2", "toggle-header-column"]),
           defaultOptions,
@@ -545,22 +505,20 @@ describe("isContentWhitelisted", () => {
       ).toBe(true);
 
       expect(
-        isContentWhitelisted(
+        isNodeWhitelisted(
           input,
           toolbar(["h2", "toggle-header-cell"]),
           defaultOptions,
         ),
       ).toBe(true);
 
-      expect(isContentWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
+      expect(isNodeWhitelisted(input, toolbar(["h2"]), defaultOptions)).toBe(
         false,
       );
       expect(
-        isContentWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
+        isNodeWhitelisted(input, toolbar(["ai-spelling"]), defaultOptions),
       ).toBe(false);
-      expect(isContentWhitelisted(input, noToolbar(), defaultOptions)).toBe(
-        true,
-      );
+      expect(isNodeWhitelisted(input, noToolbar(), defaultOptions)).toBe(true);
     });
   });
 });

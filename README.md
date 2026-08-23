@@ -66,7 +66,7 @@ The behavior of `sanitizeRichText` can be customized by passing the following op
 - Type: `boolean`
 - Default: `true`
 
-If set to `false`, hard breaks will be removed from the content. When using the default mappers, hard breaks will not be replaced by any other content. Note this might lead to lack of whitespace between words. Review your content carefully.
+If set to `false`, hard breaks will be removed from the content. When using the default mappers, hard breaks will not be replaced by any other node. Note this might lead to lack of whitespace between words. Review your content carefully.
 
 ### Example
 
@@ -74,39 +74,39 @@ If set to `false`, hard breaks will be removed from the content. When using the 
 sanitizeRichText(richText, fieldSchema, { allowHardBreak: false });
 ```
 
-### `contentMapper`
+### `nodeMapper`
 
-- Type: `(content: any) => null | undefined | any | any[]`
-- Default [`removeAllContent`](#removeAllContent)
+- Type: `(node: any) => null | undefined | any | any[]`
+- Default [`removeAllNodes`](#removeAllNodes)
 
-Whenever a rich text content object is not allowed by the whitelist, it will get remapped using this mapper function. To remove the object, return `null`. To replace it with more than one object, return an array.
+Whenever a rich text node is not allowed by the whitelist, it will get remapped using this mapper function. To remove the node, return `null`. To replace it with more than one node, return an array or nodes.
 
-Note that the content mapper function is called recursively on its own output until it returns an object that is allowed by the whitelist ⚠️.
+Note that the node mapper function is called recursively on its own output until it returns an object that is allowed by the whitelist ⚠️.
 
 #### Examples
 
 ```js
-import { turnContentIntoParagraphOrRemove } from "storyblok-sanitize-rich-text/mappers";
+import { turnNodeIntoParagraphOrRemove } from "storyblok-sanitize-rich-text/mappers";
 
 sanitizeRichText(richText, fieldSchema, {
-  contentMapper: turnContentIntoParagraphOrRemove,
+  nodeMapper: turnNodeIntoParagraphOrRemove,
 });
 ```
 
 ```js
-import { turnContentIntoHeadingOrRemove } from "storyblok-sanitize-rich-text/mappers";
+import { turnNodeIntoHeadingOrRemove } from "storyblok-sanitize-rich-text/mappers";
 
 sanitizeRichText(richText, fieldSchema, {
-  contentMapper: turnContentIntoHeadingOrRemove(1),
+  nodeMapper: turnNodeIntoHeadingOrRemove(1),
 });
 ```
 
 ```js
 sanitizeRichText(richText, fieldSchema, {
-  contentMapper: (content) => {
+  nodeMapper: (node) => {
     // Turns headings into paragraphs, deletes the rest.
-    if (content.type === "heading") {
-      return { ...content, type: "paragraph" };
+    if (node.type === "heading") {
+      return { ...node, type: "paragraph" };
     } else {
       return null;
     }
@@ -114,32 +114,32 @@ sanitizeRichText(richText, fieldSchema, {
 });
 ```
 
-#### Built-in content mappers
+#### Built-in node mappers
 
-##### `removeAllContent`
+##### `removeAllNodes`
 
-Removes all content.
+Removes all nodes.
 
-##### `turnContentIntoParagraphOrRemove`
+##### `turnNodeIntoParagraphOrRemove`
 
-Attempts to turn content into a paragraph where possible (e.g. block quotes, lists). Removes the rest (e.g. images, tables). Only use this content mapper if you have whitelisted paragraphs ⚠️.
+Attempts to turn node into a paragraph where possible (e.g. block quotes, lists). Removes the rest (e.g. images, tables). Only use this node mapper if you have whitelisted paragraphs ⚠️.
 
-##### `turnContentIntoHeadingOrRemove`
+##### `turnNodeIntoHeadingOrRemove`
 
-Attempts to turn content into a heading of the given level where possible (e.g. block quotes, lists). Removes the rest (e.g. images, tables). Only use this content mapper if you have whitelisted headings of the given level ⚠️.
+Attempts to turn node into a heading of the given level where possible (e.g. block quotes, lists). Removes the rest (e.g. images, tables). Only use this node mapper if you have whitelisted headings of the given level ⚠️.
 
 ### `markMapper`
 
-- Type: `(content: any, mark: any) => null | undefined | any | any[]`
+- Type: `(node: any, mark: any) => null | undefined | any | any[]`
 - Default [`removeAllMarks`](#removeAllMarks)
 
-Whenever a rich text mark object is not allowed by the whitelist, it will get remapped using this mapper function. To remove the object, return `null` or `undefined`. To replace it with more than one object, return an array.
+Whenever a rich text mark is not allowed by the whitelist, it will get remapped using this mapper function. To remove the mark, return `null` or `undefined`. To replace it with more than one mark, return an array.
 
 #### Examples
 
 ```js
 sanitizeRichText(richText, fieldSchema, {
-  markMapper: (_content, mark) => {
+  markMapper: (_node, mark) => {
     // Turns underlined text into bold text. Removes other marks.
     if (mark.type === "underline") {
       return { ...mark, type: "bold" };
@@ -158,7 +158,7 @@ Removes all marks.
 
 ### `attributeMapper`
 
-- Type: `(content: any, name: any, value: any) => null | [any, any] | [any, any][]`
+- Type: `(node: any, name: any, value: any) => null | [any, any] | [any, any][]`
 - Default [`removeAllAttributes`](#removeAllAttributes)
 
 Whenever a rich text object attribute is not allowed by the whitelist, it will get remapped using this mapper function. To remove the attribute, return `null`. To replace it with more than one attribute, return an array of two-element tuples (name and value).
