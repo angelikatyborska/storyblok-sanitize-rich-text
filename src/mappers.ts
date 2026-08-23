@@ -1,93 +1,93 @@
-export type ContentMapper = (content: any) => null | undefined | any | any[];
+export type NodeMapper = (node: any) => null | undefined | any | any[];
 
 export type MarkMapper = (
-  content: any,
+  node: any,
   mark: any,
 ) => null | undefined | any | any[];
 
 export type AttributeMapper = (
-  content: any,
+  node: any,
   name: any,
   value: any,
 ) => null | [any, any] | [any, any][];
 
 export const removeAllMarks: MarkMapper = () => null;
 export const removeAllAttributes: AttributeMapper = () => null;
-export const removeAllContent: ContentMapper = () => null;
+export const removeAllNodes: NodeMapper = () => null;
 
-export const turnContentIntoParagraphOrRemove: ContentMapper = (content) => {
-  if (content && typeof content === "object" && "type" in content) {
-    switch (content.type) {
+export const turnNodeIntoParagraphOrRemove: NodeMapper = (node) => {
+  if (node && typeof node === "object" && "type" in node) {
+    switch (node.type) {
       case "paragraph":
-        return content;
+        return node;
       case "heading":
-        return changeType(content, "paragraph");
+        return changeType(node, "paragraph");
       case "horizontal_rule":
         return null;
       case "image":
         return null;
       case "blockquote":
-        return unwrap(content);
+        return unwrap(node);
       case "bullet_list":
-        return unwrap(content).flatMap(unwrap);
+        return unwrap(node).flatMap(unwrap);
       case "ordered_list":
-        return unwrap(content).flatMap(unwrap);
+        return unwrap(node).flatMap(unwrap);
       case "code_block":
-        return changeType(content, "paragraph");
+        return changeType(node, "paragraph");
       case "table":
-        return unwrap(content).flatMap((c: any) => unwrap(c).flatMap(unwrap));
+        return unwrap(node).flatMap((c: any) => unwrap(c).flatMap(unwrap));
       case "tableHeader":
-        return changeType(content, "tableCell");
+        return changeType(node, "tableCell");
     }
   }
 
   return null;
 };
 
-export const turnContentIntoHeadingOrRemove: (
+export const turnNodeIntoHeadingOrRemove: (
   headingLevel: 1 | 2 | 3 | 4 | 5 | 6,
-) => ContentMapper = (level) => (content) => {
-  if (content && typeof content === "object" && "type" in content) {
-    switch (content.type) {
+) => NodeMapper = (level) => (node) => {
+  if (node && typeof node === "object" && "type" in node) {
+    switch (node.type) {
       case "paragraph":
-        return changeType(content, "heading", { level });
+        return changeType(node, "heading", { level });
       case "heading":
-        return changeType(content, "heading", { level });
+        return changeType(node, "heading", { level });
       case "horizontal_rule":
         return null;
       case "image":
         return null;
       case "blockquote":
-        return unwrap(content);
+        return unwrap(node);
       case "bullet_list":
-        return unwrap(content).flatMap(unwrap);
+        return unwrap(node).flatMap(unwrap);
       case "ordered_list":
-        return unwrap(content).flatMap(unwrap);
+        return unwrap(node).flatMap(unwrap);
       case "code_block":
-        return changeType(content, "heading", { level });
+        return changeType(node, "heading", { level });
       case "table":
-        return unwrap(content).flatMap((c: any) => unwrap(c).flatMap(unwrap));
+        return unwrap(node).flatMap((c: any) => unwrap(c).flatMap(unwrap));
       case "tableHeader":
-        return changeType(content, "tableCell");
+        return changeType(node, "tableCell");
     }
   }
 
   return null;
 };
 
-const changeType = (content: any, type: string, attrs?: any) => {
-  if (content && typeof content === "object" && "type" in content) {
-    const newAttrs = content?.attrs ? { ...content.attrs, ...attrs } : attrs;
-    return { ...content, type: type, ...(newAttrs ? { attrs: newAttrs } : {}) };
+const changeType = (node: any, type: string, attrs?: any) => {
+  if (node && typeof node === "object" && "type" in node) {
+    const newAttrs = node?.attrs ? { ...node.attrs, ...attrs } : attrs;
+    return { ...node, type: type, ...(newAttrs ? { attrs: newAttrs } : {}) };
   } else {
-    return content;
+    return node;
   }
 };
 
-const unwrap = (content: any) => {
-  if (content && typeof content === "object" && "content" in content) {
-    return content.content;
+const unwrap = (node: any) => {
+  if (node && typeof node === "object" && "content" in node) {
+    return node.content;
   } else {
-    return content;
+    return node;
   }
 };

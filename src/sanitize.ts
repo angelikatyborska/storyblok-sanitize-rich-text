@@ -1,6 +1,6 @@
 import {
   isAttrWhitelisted,
-  isContentWhitelisted,
+  isNodeWhitelisted,
   isMarkWhitelisted,
 } from "./whitelist.ts";
 
@@ -44,9 +44,9 @@ function doSanitizeRichText<T>(
   schema: RelevantRichTextFieldSchema,
   options: Options,
 ): T | null {
-  if (!isContentWhitelisted(object, schema, options)) {
+  if (!isNodeWhitelisted(object, schema, options)) {
     const objectStringBefore = JSON.stringify(object);
-    let mappedObject = options.contentMapper(object);
+    let mappedObject = options.nodeMapper(object);
     const objectStringAfter = JSON.stringify(mappedObject);
 
     if (objectStringBefore === objectStringAfter) {

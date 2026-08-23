@@ -5,13 +5,13 @@ function shouldCheckToolbar(schema: RelevantRichTextFieldSchema) {
   return schema.customize_toolbar && Array.isArray(schema.toolbar);
 }
 
-export function isContentWhitelisted(
-  content: any,
+export function isNodeWhitelisted(
+  node: any,
   schema: RelevantRichTextFieldSchema,
   options: Options,
 ) {
-  if (content && typeof content === "object" && "type" in content) {
-    switch (content.type) {
+  if (node && typeof node === "object" && "type" in node) {
+    switch (node.type) {
       case "text":
         return true;
       case "emoji":
@@ -25,7 +25,7 @@ export function isContentWhitelisted(
       case "heading":
         return (
           !shouldCheckToolbar(schema) ||
-          schema.toolbar?.includes(`h${content.attrs.level}`)
+          schema.toolbar?.includes(`h${node.attrs.level}`)
         );
       case "horizontal_rule":
         return !shouldCheckToolbar(schema) || schema.toolbar?.includes("hrule");

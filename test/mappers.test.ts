@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   removeAllMarks,
   removeAllAttributes,
-  removeAllContent,
-  turnContentIntoParagraphOrRemove,
-  turnContentIntoHeadingOrRemove,
+  removeAllNodes,
+  turnNodeIntoParagraphOrRemove,
+  turnNodeIntoHeadingOrRemove,
 } from "../src/mappers.ts";
 
 describe("mappers", () => {
@@ -21,28 +21,28 @@ describe("mappers", () => {
     });
   });
 
-  describe("removeAllContent", () => {
+  describe("removeAllNodes", () => {
     it("should return null", () => {
-      const content = {
+      const input = {
         type: "paragraph",
         content: [{ text: "Hello", type: "text" }],
       };
-      expect(removeAllContent(content)).toBeNull();
+      expect(removeAllNodes(input)).toBeNull();
     });
   });
 
   describe("turnContentToParagraphOrRemove", () => {
     it("should handle content without content property", () => {
       const input = { type: "hard_break" };
-      expect(turnContentIntoParagraphOrRemove(input)).toBeNull();
+      expect(turnNodeIntoParagraphOrRemove(input)).toBeNull();
     });
 
     it("should handle null input", () => {
-      expect(turnContentIntoParagraphOrRemove(null)).toBeNull();
+      expect(turnNodeIntoParagraphOrRemove(null)).toBeNull();
     });
 
     it("should handle non-object input", () => {
-      expect(turnContentIntoParagraphOrRemove("text")).toBeNull();
+      expect(turnNodeIntoParagraphOrRemove("text")).toBeNull();
     });
 
     describe("paragraph", () => {
@@ -59,7 +59,7 @@ describe("mappers", () => {
 
         const expectedResult = input;
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -95,7 +95,7 @@ describe("mappers", () => {
           ],
         };
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -109,7 +109,7 @@ describe("mappers", () => {
 
         const expectedResult = null;
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -132,7 +132,7 @@ describe("mappers", () => {
 
         const expectedResult = null;
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -199,7 +199,7 @@ describe("mappers", () => {
 
         const expectedResult = [...input.content];
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -274,7 +274,7 @@ describe("mappers", () => {
           },
         ];
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -349,7 +349,7 @@ describe("mappers", () => {
           },
         ];
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -383,7 +383,7 @@ describe("mappers", () => {
           ],
         };
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -548,7 +548,7 @@ describe("mappers", () => {
           },
         ];
 
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -601,25 +601,25 @@ describe("mappers", () => {
             },
           ],
         };
-        expect(turnContentIntoParagraphOrRemove(input)).toStrictEqual(
+        expect(turnNodeIntoParagraphOrRemove(input)).toStrictEqual(
           expectedResult,
         );
       });
     });
   });
 
-  describe("turnContentIntoHeadingOrRemove", () => {
-    it("should handle content without content property", () => {
+  describe("turnNodeIntoHeadingOrRemove", () => {
+    it("should handle node without content property", () => {
       const input = { type: "hard_break" };
-      expect(turnContentIntoHeadingOrRemove(1)(input)).toBeNull();
+      expect(turnNodeIntoHeadingOrRemove(1)(input)).toBeNull();
     });
 
     it("should handle null input", () => {
-      expect(turnContentIntoHeadingOrRemove(1)(null)).toBeNull();
+      expect(turnNodeIntoHeadingOrRemove(1)(null)).toBeNull();
     });
 
     it("should handle non-object input", () => {
-      expect(turnContentIntoHeadingOrRemove(1)("text")).toBeNull();
+      expect(turnNodeIntoHeadingOrRemove(1)("text")).toBeNull();
     });
 
     describe("paragraph", () => {
@@ -628,7 +628,7 @@ describe("mappers", () => {
           type: "paragraph",
           content: [
             {
-              text: "Lorem impsum",
+              text: "Lorem ipsum",
               type: "text",
             },
           ],
@@ -641,13 +641,13 @@ describe("mappers", () => {
           },
           content: [
             {
-              text: "Lorem impsum",
+              text: "Lorem ipsum",
               type: "text",
             },
           ],
         };
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -657,7 +657,7 @@ describe("mappers", () => {
           type: "paragraph",
           content: [
             {
-              text: "Lorem impsum",
+              text: "Lorem ipsum",
               type: "text",
             },
           ],
@@ -670,13 +670,13 @@ describe("mappers", () => {
           },
           content: [
             {
-              text: "Lorem impsum",
+              text: "Lorem ipsum",
               type: "text",
             },
           ],
         };
 
-        expect(turnContentIntoHeadingOrRemove(5)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(5)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -699,7 +699,7 @@ describe("mappers", () => {
 
         const expectedResult = input;
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -731,7 +731,7 @@ describe("mappers", () => {
           ],
         };
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -745,7 +745,7 @@ describe("mappers", () => {
 
         const expectedResult = null;
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -768,7 +768,7 @@ describe("mappers", () => {
 
         const expectedResult = null;
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -835,7 +835,7 @@ describe("mappers", () => {
 
         const expectedResult = [...input.content];
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -910,7 +910,7 @@ describe("mappers", () => {
           },
         ];
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -985,7 +985,7 @@ describe("mappers", () => {
           },
         ];
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -1020,7 +1020,7 @@ describe("mappers", () => {
           ],
         };
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -1185,7 +1185,7 @@ describe("mappers", () => {
           },
         ];
 
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });
@@ -1238,7 +1238,7 @@ describe("mappers", () => {
             },
           ],
         };
-        expect(turnContentIntoHeadingOrRemove(1)(input)).toStrictEqual(
+        expect(turnNodeIntoHeadingOrRemove(1)(input)).toStrictEqual(
           expectedResult,
         );
       });

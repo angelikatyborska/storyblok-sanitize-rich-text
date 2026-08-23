@@ -7,7 +7,7 @@ import {
 import { defaultOptions } from "../src/options.ts";
 import {
   type MarkMapper,
-  turnContentIntoParagraphOrRemove,
+  turnNodeIntoParagraphOrRemove,
 } from "../src/mappers.ts";
 
 describe("sanitizeRichText", () => {
@@ -625,7 +625,7 @@ describe("sanitizeRichText", () => {
       const options = {
         ...defaultOptions,
         allowHardBreak: false,
-        contentMapper: () => "foo",
+        nodeMapper: () => "foo",
       };
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
@@ -690,7 +690,7 @@ describe("sanitizeRichText", () => {
       const options = {
         ...defaultOptions,
         allowHardBreak: false,
-        contentMapper: () => ["foo", "bar"],
+        nodeMapper: () => ["foo", "bar"],
       };
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
@@ -753,10 +753,10 @@ describe("sanitizeRichText", () => {
       const options = {
         ...defaultOptions,
         allowHardBreak: false,
-        contentMapper: (content: any) => {
-          if (content.type === "heading") {
+        nodeMapper: (node: any) => {
+          if (node.type === "heading") {
             return {
-              ...content,
+              ...node,
               type: "paragraph",
             };
           } else {
@@ -805,7 +805,7 @@ describe("sanitizeRichText", () => {
 
       const options = {
         ...defaultOptions,
-        contentMapper: (content: any) => content,
+        nodeMapper: (node: any) => node,
       };
 
       expect(() => sanitizeRichText(input, schema, options)).toThrow(
@@ -851,7 +851,7 @@ describe("sanitizeRichText", () => {
 
       const options = {
         ...defaultOptions,
-        contentMapper: (content: any) => ({ ...content, type: "paragraph" }),
+        nodeMapper: (node: any) => ({ ...node, type: "paragraph" }),
       };
 
       expect(() => sanitizeRichText(input, schema, options)).toThrow(
@@ -894,13 +894,13 @@ describe("sanitizeRichText", () => {
 
       const options = {
         ...defaultOptions,
-        contentMapper: (content: any) => {
-          if (content.type === "heading") {
+        nodeMapper: (node: any) => {
+          if (node.type === "heading") {
             return {
-              ...content,
+              ...node,
               attrs: {
                 // swapped heading levels, even though neither is allowed, will cause an infinite loop
-                level: content.attrs.level === 1 ? 2 : 1,
+                level: node.attrs.level === 1 ? 2 : 1,
               },
             };
           }
@@ -1018,7 +1018,7 @@ describe("sanitizeRichText", () => {
       const options = {
         ...defaultOptions,
         allowHardBreak: false,
-        contentMapper: (n: any) => ({ ...n, type: "foo" }),
+        nodeMapper: (n: any) => ({ ...n, type: "foo" }),
       };
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
@@ -1227,7 +1227,7 @@ describe("sanitizeRichText", () => {
       const options = {
         ...defaultOptions,
         allowHardBreak: false,
-        contentMapper: (n: any) => [
+        nodeMapper: (n: any) => [
           { ...n, type: "foo" },
           { ...n, type: "bar" },
         ],
@@ -1485,7 +1485,7 @@ describe("sanitizeRichText", () => {
 
       const options = {
         ...defaultOptions,
-        contentMapper: turnContentIntoParagraphOrRemove,
+        nodeMapper: turnNodeIntoParagraphOrRemove,
       };
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
