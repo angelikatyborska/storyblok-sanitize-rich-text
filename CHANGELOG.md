@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.0.4 (2026-08-23)
 
 - Update terminology to replace the term "content" with "node", to match the terminology used by rich text rendering libraries.
 
