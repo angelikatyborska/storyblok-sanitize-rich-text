@@ -16,6 +16,8 @@ npm install storyblok-sanitize-rich-text
 
 This library assumes that you're using the option "Customize toolbar items" to limit which formatting options are available in your rich text fields. It uses that configuration to remove the formatting options that are not part of the toolbar.
 
+You might want to whitelist paragraphs and emojis in all rich text fields - please [see gotchas](#gotchas).
+
 ### Step 1: Pull all components
 
 Use the [Storyblok CLI to pull components](https://github.com/storyblok/monoblok/blob/main/packages/cli/src/commands/components/pull/README.md) into separate JSON files.
@@ -170,6 +172,10 @@ Whenever a rich text object attribute is not allowed by the whitelist, it will g
 Removes all attributes.
 
 ## Gotchas
+
+### Paragraphs
+
+Paragraphs have to be explicitly whitelisted, otherwise this library will remove them. This might seem like an unusual choice given that paragraphs are the default node created when you press "enter" in a rich text field. However, treating paragraphs like any other node and requiring them to be whitelisted allows you to create specialized rich text fields, e.g. a field that must only contain a heading, or a field that must only contain a list etc.
 
 ### Emojis
 
