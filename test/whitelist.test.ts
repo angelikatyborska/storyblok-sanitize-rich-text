@@ -14,7 +14,7 @@ const noToolbar = () => {
   return { customize_toolbar: false, toolbar: [] };
 };
 
-describe("isContentWhitelisted", () => {
+describe("isNodeWhitelisted", () => {
   describe("text", () => {
     it("always allowed", () => {
       const input = {
