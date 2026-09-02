@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.0.5 (2026-09-02)
 
 - Fix `attributeMapper` calls to pass the node as the first argument, not the attributes object.
 

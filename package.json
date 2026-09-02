@@ -1,6 +1,6 @@
 {
   "name": "storyblok-sanitize-rich-text",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Removes undesirable formatting options from Storyblok rich text objects based on the rich text field's schema.",
   "files": [
     "README.md",
