@@ -97,7 +97,7 @@ function doSanitizeRichText<T>(
   ) {
     object = {
       ...object,
-      attrs: sanitizeAttrs(object["attrs"], schema, options),
+      attrs: sanitizeAttrs(object, object["attrs"], schema, options),
     };
   }
 
@@ -135,16 +135,17 @@ function doSanitizeRichText<T>(
 }
 
 export function sanitizeAttrs<T extends Record<any, any>>(
-  object: T,
+  node: any,
+  attrs: T,
   schema: RelevantRichTextFieldSchema,
   options: Options,
 ): T {
-  return Object.keys(object).reduce(
+  return Object.keys(attrs).reduce(
     (acc, key) => {
       if (isAttrWhitelisted(key, acc[key], schema)) {
         return acc;
       } else {
-        const newAttr = options.attributeMapper(object, key, acc[key]);
+        const newAttr = options.attributeMapper(node, key, acc[key]);
         delete acc[key];
 
         if (newAttr) {
@@ -156,7 +157,7 @@ export function sanitizeAttrs<T extends Record<any, any>>(
         return acc;
       }
     },
-    { ...object },
+    { ...attrs },
   );
 }
 

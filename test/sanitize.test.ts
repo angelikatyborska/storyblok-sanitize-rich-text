@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   sanitizeAttrs,
   sanitizeRichText,
@@ -6,7 +6,9 @@ import {
 } from "../src/sanitize.ts";
 import { defaultOptions } from "../src/options.ts";
 import {
+  type AttributeMapper,
   type MarkMapper,
+  type NodeMapper,
   turnNodeIntoParagraphOrRemove,
 } from "../src/mappers.ts";
 
@@ -622,15 +624,21 @@ describe("sanitizeRichText", () => {
         ],
       };
 
+      const nodeMapper: NodeMapper = vi.fn().mockImplementation(() => "foo");
+
       const options = {
         ...defaultOptions,
         allowHardBreak: false,
-        nodeMapper: () => "foo",
+        nodeMapper,
       };
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
         expectedOutput,
       );
+      expect(nodeMapper).toHaveBeenCalledTimes(3);
+      expect(nodeMapper).toHaveBeenCalledWith(input.content[0]);
+      expect(nodeMapper).toHaveBeenCalledWith(input.content[1]);
+      expect(nodeMapper).toHaveBeenCalledWith(input.content[3]);
     });
 
     it("the mapper can return an array", () => {
@@ -1599,12 +1607,12 @@ describe("sanitizeRichText", () => {
         ],
       };
 
-      const markMapper: MarkMapper = () => ({
+      const markMapper: MarkMapper = vi.fn().mockImplementation(() => ({
         type: "highlight",
         attrs: {
           color: "#9AE69D",
         },
-      });
+      }));
       const options = {
         ...defaultOptions,
         markMapper,
@@ -1613,6 +1621,13 @@ describe("sanitizeRichText", () => {
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
         expectedOutput,
       );
+      expect(markMapper).toHaveBeenCalledTimes(2);
+      expect(markMapper).toHaveBeenCalledWith(input?.content[0]?.content[0], {
+        type: "italic",
+      });
+      expect(markMapper).toHaveBeenCalledWith(input?.content[0]?.content[2], {
+        type: "strike",
+      });
     });
 
     it("the mapper can return an array", () => {
@@ -1813,7 +1828,9 @@ describe("sanitizeRichText", () => {
         ],
       };
 
-      const attributeMapper: () => [string, string] = () => ["foo", "bar"];
+      const attributeMapper: AttributeMapper = vi
+        .fn()
+        .mockImplementation(() => ["foo", "bar"]);
       const options = {
         ...defaultOptions,
         attributeMapper,
@@ -1821,6 +1838,12 @@ describe("sanitizeRichText", () => {
 
       expect(sanitizeRichText(input, schema, options)).toStrictEqual(
         expectedOutput,
+      );
+      expect(attributeMapper).toHaveBeenCalledTimes(1);
+      expect(attributeMapper).toHaveBeenCalledWith(
+        input.content[0],
+        "textAlign",
+        "right",
       );
     });
   });
@@ -1831,6 +1854,7 @@ describe("sanitizeAttrs", () => {
     it("removes if specific value not allowed", () => {
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "left" },
           { customize_toolbar: true, toolbar: [] },
           defaultOptions,
@@ -1841,6 +1865,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "left" },
           { customize_toolbar: true, toolbar: ["align-center"] },
           defaultOptions,
@@ -1849,6 +1874,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "left" },
           { customize_toolbar: true, toolbar: ["align-right"] },
           defaultOptions,
@@ -1857,6 +1883,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "left" },
           { customize_toolbar: true, toolbar: ["align-justify"] },
           defaultOptions,
@@ -1865,6 +1892,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "left" },
           { customize_toolbar: true, toolbar: ["align-left"] },
           defaultOptions,
@@ -1873,6 +1901,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "center" },
           { customize_toolbar: true, toolbar: ["align-center"] },
           defaultOptions,
@@ -1881,6 +1910,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "right" },
           { customize_toolbar: true, toolbar: ["align-right"] },
           defaultOptions,
@@ -1889,6 +1919,7 @@ describe("sanitizeAttrs", () => {
 
       expect(
         sanitizeAttrs(
+          {},
           { level: 1, textAlign: "justify" },
           { customize_toolbar: true, toolbar: ["align-justify"] },
           defaultOptions,
